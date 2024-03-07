@@ -3,39 +3,75 @@
 #include <event/TimeStamp.hpp>
 
 namespace mirror {
+    /**
+     * Event stores the data from a single NGINX log event.
+    */
     class Event {
-
-    public: // methods
+    public:
         /**
-         * Creates an Event by parsing a line from the NGINX log file.
+         * Constructs an Event by parsing a line from the NGINX log.
+         * Note: The parser assumes that NGINX escapes double quotes in its log
+         * output. This is its default behavior, but the parser may behave
+         * unexpectedly if this is not the case.
+         * @param line Line from the NGINX log to parse
         */
-        Event(std::string line);
+        Event(const std::string &line);
 
-        TimeStamp getTimeStamp() { return time_stamp; }
+        /**
+         * Destroys this Event.
+        */
+        ~Event() { delete time_stamp; }
 
-        const std::string& getRemoteAddr() { return remote_addr; }
+        /**
+         * @returns this Event as a JSON string
+        */
+        std::string toString();
 
-        const std::string& getRequest() { return request; }
+    private:
+        TimeStamp *time_stamp;
 
-        uint16_t getStatus() { return status; }
-
-        uint64_t getBytesSent() { return bytes_sent; }
-
-        uint32_t getBytesReceived() { return bytes_recv; }
-
-        std::string getUserAgent() { return user_agent; }
-
-    private: // data
-        TimeStamp time_stamp;
         std::string remote_addr;
+
         std::string request;
-        std::string request_path;
+
         uint16_t status;
+
         uint64_t bytes_sent;
-        uint32_t bytes_recv;
+
+        uint64_t bytes_recv;
+
         std::string user_agent;
 
-    private: // methods
+    private:
+        /**
+         * Returns the next string (enclosed with '"') in the line.
+         * This function assumes that instances of '"' within the strings
+         * themselves are escaped.
+         * @param line Line to scan
+         * @param index Index to start scanning at
+         * @returns The next '"'-enclosed string in the line.
+        */
+        std::string nextString(const std::string &line, uint32_t &index);
 
+        /**
+         * Returns true if the character at {index} is '"' and either of the 
+         * following are true:
+         *  1. {index} is 0.
+         *  2. The character at {index - 1} is '\'.
+         * @param index Index of the character to test
+         * @returns True if the character at the given index is an unescaped '"'
+        */
+        inline bool isQuote(const std::string &line, uint32_t &index);
+
+        /**
+         * Returns the next number (enclosed with '"') in the line.
+         * This function assumes that instances of '"' within the strings
+         * themselves are escaped.
+         * @param line Line to scan
+         * @param index Index to start scanning at
+         * @returns The next '"'-enclosed number in the line.
+        */
+        template <typename T>
+        T nextNumber(const std::string &line, uint32_t &index);
     };
 }

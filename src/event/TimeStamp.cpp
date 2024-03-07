@@ -1,17 +1,21 @@
 #include <event/TimeStamp.hpp>
 #include <sstream>
 #include <iomanip>
+#include <iostream>
 
 namespace mirror {
 
-    TimeStamp::TimeStamp(const std::string &line) {
+    /* ----- Public ----- */
+
+    TimeStamp::TimeStamp(std::string line) {
+        std::cout << line << std::endl;
         uint8_t index = 0;
-        this->day = parseU8(line, index);
+        this->day = parseNumber<uint8_t>(line, index);
         this->month = parseMonth(line, index);
-        this->year = parseU16(line, index);
-        this->hour = parseU8(line, index);
-        this->minute = parseU8(line, index);
-        this->second = parseU8(line, index);
+        this->year = parseNumber<uint16_t>(line, index);
+        this->hour = parseNumber<uint8_t>(line, index);
+        this->minute = parseNumber<uint8_t>(line, index);
+        this->second = parseNumber<uint8_t>(line, index);
     }
 
     std::string TimeStamp::toString() {
@@ -25,9 +29,9 @@ namespace mirror {
         return s.str();
     }
 
-    // Private
+    /* ----- Private ----- */
 
-    uint8_t TimeStamp::parseMonth(const std::string& line, uint8_t &index) {
+    uint8_t TimeStamp::parseMonth(const std::string &line, uint8_t &index) {
         std::stringstream s;
         for(; index < line.size() && !isSeparator(line.at(index)); index++) {
             s << line.at(index);
@@ -41,7 +45,8 @@ namespace mirror {
         }
     }
 
-    uint16_t TimeStamp::parseU16(const std::string& line, uint8_t &index) {
+    template <typename T>
+    T TimeStamp::parseNumber(const std::string &line, uint8_t &index) {
         std::stringstream s;
         for(; index < line.size() && !isSeparator(line.at(index)); index++) {
             s << line.at(index);
@@ -51,13 +56,7 @@ namespace mirror {
         s >> result;
         return result;
     }
-
-    uint8_t TimeStamp::parseU8(const std::string& line, uint8_t &index) {
-        return (uint8_t) parseU16(line, index);
-    }
-
     
-
     inline bool TimeStamp::isSeparator(const char& c) {
         return c == '/' || c == ':' || c == ' ';
     }
