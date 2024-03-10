@@ -11,6 +11,12 @@ FetchContent_Declare(prometheus-cpp
 )
 FetchContent_MakeAvailable(prometheus-cpp)
 
+FetchContent_Declare(json
+    GIT_REPOSITORY https://github.com/nlohmann/json
+    GIT_TAG v3.11.2
+)
+FetchContent_MakeAvailable(json)
+
 # External libraries from source
 add_subdirectory(lib/mirror-logging)
 
@@ -23,9 +29,19 @@ add_library(event
     src/event/TimeStamp.cpp
 )
 
+add_library(state
+    src/state/State.cpp
+)
+
 # Libraries to be linked internally
 target_link_libraries(event
     mirror-logging
+)
+
+target_link_libraries(state
+    mirror-logging
+    event
+    nlohmann_json::nlohmann_json
 )
 
 # Libraries to be linked to executable

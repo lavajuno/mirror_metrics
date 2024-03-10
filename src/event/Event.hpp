@@ -23,16 +23,33 @@ namespace mirror {
         ~Event() { delete time_stamp; }
 
         /**
-         * @returns this Event as a JSON string
+         * @returns This Event as a JSON string
         */
         std::string toString();
+
+        /**
+         * @returns This Event's status
+        */
+        uint16_t getStatus() { return status; }
+
+        /**
+         * @returns This Event's project (or an empty string if none is found)
+        */
+        const std::string &getProject() { return project; }
+
+        /**
+         * @returns This Event's path (or an empty string if none is found)
+        */
+        const std::string &getPath() { return path; }
 
     private:
         TimeStamp *time_stamp;
 
         std::string remote_addr;
 
-        std::string request;
+        std::string project;
+
+        std::string path;
 
         uint16_t status;
 
@@ -73,5 +90,21 @@ namespace mirror {
         */
         template <typename T>
         T nextNumber(const std::string &line, uint32_t &index);
+
+        /**
+         * Grabs the path from a request
+         * Note: Only ran if a request returns 2xx to filter malicious requests.
+         * @param request Request to parse
+         * @returns The path in the request, or an empty string if it is invalid
+        */
+        std::string parsePath(const std::string &request);
+
+        /**
+         * Grabs the project name from a path
+         * Note: Only ran if a request returns 2xx to filter malicious requests.
+         * @param path Path
+         * @returns The project name in the path, or an empty string if it is invalid
+        */
+        std::string parseProject(const std::string &path);
     };
 }

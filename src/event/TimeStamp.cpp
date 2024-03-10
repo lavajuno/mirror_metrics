@@ -1,14 +1,12 @@
 #include <event/TimeStamp.hpp>
 #include <sstream>
 #include <iomanip>
-#include <iostream>
 
 namespace mirror {
 
     /* ----- Public ----- */
 
-    TimeStamp::TimeStamp(std::string line) {
-        std::cout << line << std::endl;
+    TimeStamp::TimeStamp(const std::string &line) {
         uint8_t index = 0;
         this->day = parseNumber<uint8_t>(line, index);
         this->month = parseMonth(line, index);

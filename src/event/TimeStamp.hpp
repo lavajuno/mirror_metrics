@@ -11,7 +11,7 @@ namespace mirror {
         /**
          * Constructs a TimeStamp by parsing a timestamp from the NGINX log.
         */
-        TimeStamp(std::string line);
+        TimeStamp(const std::string &line);
 
         /**
          * @returns This TimeStamp as a string (YYYY-MM-DD hh:mm:ss)

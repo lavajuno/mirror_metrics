@@ -6,7 +6,7 @@ services:
     expose:
       - 8080
     volumes:
-      - /var/log/nginx/access.log:/var/log/nginx/access.log:ro
+      - ./access.log:/mirror_metrics/access.log:ro
     networks:
       - mirror
 

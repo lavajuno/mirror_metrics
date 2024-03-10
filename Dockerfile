@@ -17,4 +17,4 @@ RUN apt install -y libzmq3-dev curl
 EXPOSE 8080
 WORKDIR /mirror_metrics
 COPY --from=builder /mirror_metrics/build/mirror_metrics_engine .
-ENTRYPOINT ["./mirror_metrics_engine"]
+ENTRYPOINT ["/bin/bash", "-c" , "tail -f /mirror_metrics/access.log | ./mirror_metrics_engine"]
