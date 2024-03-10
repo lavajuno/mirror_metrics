@@ -33,6 +33,11 @@ namespace mirror {
         uint16_t getStatus() { return status; }
 
         /**
+         * @returns This Event's bytes sent
+        */
+        uint64_t getBytesSent() { return bytes_sent; }
+
+        /**
          * @returns This Event's project (or an empty string if none is found)
         */
         const std::string &getProject() { return project; }

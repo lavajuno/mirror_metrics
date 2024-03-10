@@ -7,18 +7,24 @@
 #include <fstream>
 #include <string>
 #include <map>
+#include <filesystem>
 
 using json = nlohmann::json;
+
+#define FILE_PATH "data/state.json"
+#define BACKUP_FILE_PATH "data/state.json.bak"
 
 namespace mirror {
 
     /* ----- Public ----- */
 
-    State::State(std::string file_path) {
+    State::State() {
+        this->logger = Logger::getInstance();
+        logger->info("Creating application state...");
         std::ifstream f;
-        f.open(file_path);
+        f.open(FILE_PATH);
         if(f.fail()) {
-            std::cerr << "Failed to load state." << std::endl;
+            logger->warn("Failed to load application state from disk.");
             this->hits = std::map<std::string, u_long>();
             this->bytes_sent = std::map<std::string, u_long>();
             this->last_event = "INVALID";
@@ -32,15 +38,17 @@ namespace mirror {
         this->last_event = state["last_event"].template get<std::string>();
     }
 
-    void State::save(std::string file_path) {
+    void State::save() {
+        logger->info("Saving application state...");
         json j;
         j["hits"] = hits;
         j["bytes_sent"] = bytes_sent;
         j["last_event"] = last_event;
         std::ofstream f;
-        f.open(file_path, std::ofstream::trunc);
+        std::rename(FILE_PATH, BACKUP_FILE_PATH);
+        f.open(FILE_PATH, std::ofstream::trunc);
         if(f.fail()) {
-            std::cerr << "Failed to save state." << std::endl;
+            logger->error("Failed to save application state.");
             return;
         }
         f << j;
@@ -48,5 +56,14 @@ namespace mirror {
         f.close();
     }
 
-    /* ----- Private ----- */
+    void State::registerHit(const std::string &project) {
+        hits.insert({project, 0});
+        hits[project] += 1;
+    }
+
+    void State::registerBytesSent(const std::string &project, uint64_t req_bytes_sent) {
+        bytes_sent.insert({project, 0});
+        bytes_sent[project] += req_bytes_sent;
+    }
+    
 }
