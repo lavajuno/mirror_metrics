@@ -1,6 +1,7 @@
 #include <event/Event.hpp>
 #include <event/TimeStamp.hpp>
 #include <mirror/logger.hpp>
+#include <state/State.hpp>
 
 #include <prometheus/counter.h>
 #include <prometheus/exposer.h>
@@ -24,6 +25,10 @@ void terminate(int signal) {
 }
 
 int main() {
+    std::string path = "test.json";
+    State s(path);
+    s.save(path);
+    exit(0);
     // Register signal handler
     std::signal(SIGINT, terminate);
 

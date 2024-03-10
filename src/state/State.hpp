@@ -1,7 +1,6 @@
 #include <string>
 #include <map>
 #include <event/Event.hpp>
-#include <nlohmann/json.hpp>
 
 
 namespace mirror {
@@ -9,9 +8,21 @@ namespace mirror {
     public:
         State(std::string file_path);
 
+        const std::map<std::string, u_long> &getHits();
+
+        const std::map<std::string, u_long> &getBytesSent();
+
+        void save(std::string file_path);
+
+        //void rotate(const std::string& file_path);
+
     private:
         std::map<std::string, u_long> hits;
+
         std::map<std::string, u_long> bytes_sent;
-        Event last_event;
+
+        std::string last_event;
+    
     };
+
 }

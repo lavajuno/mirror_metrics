@@ -36,6 +36,7 @@ add_library(state
 # Libraries to be linked internally
 target_link_libraries(event
     mirror-logging
+    nlohmann_json::nlohmann_json
 )
 
 target_link_libraries(state
@@ -49,5 +50,6 @@ link_libraries(
     mirror-logging
     event
     prometheus-cpp::pull
+    state
 )
 add_executable(mirror_metrics_engine src/main.cpp)
