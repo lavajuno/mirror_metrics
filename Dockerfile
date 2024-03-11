@@ -13,8 +13,8 @@ RUN cmake --build /mirror_metrics/build --target all
 # Run
 FROM ubuntu:latest
 RUN apt update && apt upgrade -y
-RUN apt install -y libzmq3-dev curl
+RUN apt install -y libzmq3-dev
 EXPOSE 8080
 WORKDIR /mirror_metrics
 COPY --from=builder /mirror_metrics/build/mirror_metrics_engine .
-ENTRYPOINT ["/bin/bash", "-c" , "tail -f /mirror_metrics/access.log | ./mirror_metrics_engine"]
+ENTRYPOINT ["/bin/bash", "-c" , "tail --lines 1000000 -f /mirror_metrics/access.log | ./mirror_metrics_engine"]
