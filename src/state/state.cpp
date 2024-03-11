@@ -1,6 +1,5 @@
-#include <state/State.hpp>
+#include <state/state.hpp>
 
-#include <event/Event.hpp>
 #include <nlohmann/json.hpp>
 
 #include <iostream>
@@ -27,7 +26,7 @@ namespace mirror {
             logger->warn("Failed to load application state from disk.");
             this->hits = std::map<std::string, u_long>();
             this->bytes_sent = std::map<std::string, u_long>();
-            this->last_event = "INVALID";
+            this->last_event = "";
             return;
         }
         json state = json::parse(f);
@@ -49,11 +48,13 @@ namespace mirror {
         f.open(FILE_PATH, std::ofstream::trunc);
         if(f.fail()) {
             logger->error("Failed to save application state.");
-            return;
+        } else {
+            f << j;
+            f.close();
         }
-        f << j;
-        std::cout << j;
-        f.close();
+        std::stringstream s;
+        s << "Saved state: \"" << j << "\"";
+        logger->debug(s.str());   
     }
 
     void State::registerHit(const std::string &project) {

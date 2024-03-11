@@ -1,13 +1,13 @@
 #pragma once
 #include <string>
-#include <event/TimeStamp.hpp>
+#include <event/timestamp.hpp>
 
 namespace mirror {
     /**
      * Event stores the data from a single NGINX log event.
     */
     class Event {
-    public:
+    public: // methods
         /**
          * Constructs an Event by parsing a line from the NGINX log.
          * Note: The parser assumes that NGINX escapes double quotes in its log
@@ -47,7 +47,27 @@ namespace mirror {
         */
         const std::string &getPath() { return path; }
 
-    private:
+    public: // operators
+        friend bool operator<(const Event &l, const Event &r) {
+            return *l.time_stamp < *r.time_stamp;
+        }
+
+        friend bool operator>(const Event &l, const Event &r) {
+            return *l.time_stamp > *r.time_stamp;
+        }
+
+        friend bool operator==(const Event &l, const Event &r) {
+            return     *l.time_stamp == *r.time_stamp 
+                    && l.remote_addr == r.remote_addr
+                    && l.project     == r.project
+                    && l.path        == r.path
+                    && l.status      == r.status
+                    && l.bytes_sent  == r.bytes_sent
+                    && l.bytes_recv  == r.bytes_recv
+                    && l.user_agent  == r.user_agent;
+        }
+
+    private: // data
         TimeStamp *time_stamp;
 
         std::string remote_addr;
@@ -64,7 +84,7 @@ namespace mirror {
 
         std::string user_agent;
 
-    private:
+    private: // methods
         /**
          * Returns the next string (enclosed with '"') in the line.
          * This function assumes that instances of '"' within the strings

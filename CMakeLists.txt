@@ -25,12 +25,12 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 
 # Internal libraries from source
 add_library(event
-    src/event/Event.cpp
-    src/event/TimeStamp.cpp
+    src/event/event.cpp
+    src/event/timestamp.cpp
 )
 
 add_library(state
-    src/state/State.cpp
+    src/state/state.cpp
 )
 
 # Libraries to be linked internally

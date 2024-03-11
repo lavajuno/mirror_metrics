@@ -1,4 +1,4 @@
-#include <event/Event.hpp>
+#include <event/event.hpp>
 #include <sstream>
 
 namespace mirror {
