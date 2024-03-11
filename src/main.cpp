@@ -12,7 +12,7 @@
 #include <thread>
 #include <csignal>
 
-#define STATE_UPDATE_INTERVAL 5.0
+#define STATE_UPDATE_INTERVAL 1.0
 
 using namespace mirror;
 
@@ -21,7 +21,7 @@ int main() {
     Logger* logger = Logger::getInstance();
     logger->configure(4001, "Metrics Engine", "mirrorlog");
 
-    // Restore application state
+    // Restore application state from disk
     State state;
 
     logger->info("Configuring Prometheus...");
@@ -29,7 +29,7 @@ int main() {
     // Expose port 8080 to be scraped
     prometheus::Exposer exposer{"0.0.0.0:8080"};
 
-    // Create registry
+    // Create registry for prometheus
     auto registry = std::make_shared<prometheus::Registry>();
 
     // Register counters
@@ -52,10 +52,10 @@ int main() {
         byte_counter.Add({{"project", i.first}}).Increment(i.second);
     }
 
-    // Allow scraping of registry
+    // Allow scraping of registry by Prometheus
     exposer.RegisterCollectable(registry);
 
-    // Fast forward to last seen event
+    // Fast forward to last seen event in the log
     if(state.getLastEvent().size() > 0) {
         logger->info("Resuming after last seen event...");
         Event last_event(state.getLastEvent());
