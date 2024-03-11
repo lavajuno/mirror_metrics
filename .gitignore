@@ -1,2 +1,4 @@
 build/*
 .vscode/*
+access.log
+access.log.txt
